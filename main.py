@@ -1,4 +1,5 @@
 import numpy as np
+from collections import deque
 import argparse
 import queue, threading
 import tkinter as tk
@@ -16,7 +17,6 @@ parser.add_argument('--mel', default=128,   type=int, help='mel bands')
 parser.add_argument('--rd', default=5,    type=int, help='recording duration')
 args = parser.parse_args()
 
-# global audio_visual_que
 audio_visual_que = queue.Queue() # audio data container for visualization
 audio_detect_que = queue.Queue() # audio data container for event detection
 sampler = Sampler(audio_detect_que, audio_visual_que, args) # sampling audio
@@ -28,45 +28,25 @@ UI
 '''
 is_recording = False
 buffer_size = (args.sr//args.ws)*args.ws*args.rd*5
-audio_buffer = np.zeros(buffer_size)
-# for i in range(buffer_size):
-#     # fill buffer with zeros value
-#     audio_buffer.append(np.zeros(args.ws))
+audio_buffer = deque(np.zeros(buffer_size), maxlen=buffer_size)
 def fill_audio_buffer_with_que():
     global is_recording, audio_visual_que, audio_buffer, buffer_size
     while is_recording:
         while not audio_visual_que.empty():
-            print(audio_visual_que.qsize())
-            s1 = time.time()
             data = audio_visual_que.get()
-            s2 = time.time()
-            print("get: ", s2-s1)
             assert len(audio_buffer) == buffer_size
-            s3 = time.time()
-            audio_buffer = np.insert(audio_buffer, 0, data)
-            s4 = time.time()
-            print("insert: ", s4-s3)
-            audio_buffer = audio_buffer[:buffer_size]
-            print("delete: ", time.time()-s4)
-            print()
+            audio_buffer.extendleft(data)
     print("exit fill_audio_buffer_with_que()")
 
 def plot_audio_in_buffer():
-    global ax, audio_graph, audio_buffer, audio_visual_que, is_recording            
+    global ax, audio_graph, audio_buffer, buffer_size, audio_visual_que, is_recording            
     while is_recording:
+        TIME = np.linspace(0, buffer_size//args.sr, num=buffer_size)
         while not audio_visual_que.empty():
-            s1 = time.time()
-            plot_data = audio_buffer
-            TIME = np.linspace(0, len(plot_data)//args.sr, num=len(plot_data))
-            s2 = time.time()
-            # print("data prepare: {}s".format(s2-s1))
+            plot_data = np.array(audio_buffer)
             ax.cla()
             ax.plot(TIME, plot_data)
             audio_graph.draw()
-            s3 = time.time()
-            # print("draw: {}s".format(s3-s2))
-            # print("spend {}s to loop plot_audio_in_buffer() onece".format(s3-s1))
-            # print()
     print("exit plot_audio_in_buffer()")
 
 def press_start():
