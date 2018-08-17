@@ -64,10 +64,10 @@ def press_pause():
     global is_recording, audio_buffer_thread, animate
     if is_recording==True:
         print('pause button')
+        threading.Thread(target=pause_animation).start()
         sampler.stop()
         # detector.stop()
         is_recording=False
-        threading.Thread(target=pause_animation)
 
 def pause_animation():
     global audio_visual_que, animate
