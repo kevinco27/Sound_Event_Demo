@@ -5,6 +5,7 @@ import queue, threading
 import tkinter as tk
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
+from matplotlib.animation import FuncAnimation
 import time
 from SoundSampler import Sampler
 # from EventDetect import Detector
@@ -29,6 +30,7 @@ UI
 is_recording = False
 buffer_size = (args.sr//args.ws)*args.ws*args.rd*5
 audio_buffer = deque(np.zeros(buffer_size), maxlen=buffer_size)
+TIME = np.linspace(0, buffer_size//args.sr, num=buffer_size)
 def fill_audio_buffer_with_que():
     global is_recording, audio_visual_que, audio_buffer, buffer_size
     while is_recording:
@@ -36,36 +38,42 @@ def fill_audio_buffer_with_que():
             data = audio_visual_que.get()
             assert len(audio_buffer) == buffer_size
             audio_buffer.extendleft(data)
-    print("exit fill_audio_buffer_with_que()")
 
-def plot_audio_in_buffer():
-    global ax, audio_graph, audio_buffer, buffer_size, audio_visual_que, is_recording            
-    while is_recording:
-        TIME = np.linspace(0, buffer_size//args.sr, num=buffer_size)
-        while not audio_visual_que.empty():
-            plot_data = np.array(audio_buffer)
-            ax.cla()
-            ax.plot(TIME, plot_data)
-            audio_graph.draw()
-    print("exit plot_audio_in_buffer()")
+def plot_audio_in_buffer(frame):
+    global ax, line, audio_buffer, buffer_size
+    ax.set_ylim(-3, 3)
+    plot_data = np.array(audio_buffer)
+    line.set_data(TIME, plot_data)
+    return line
 
 def press_start():
-    global is_recording, audio_buffer_thread
+    global is_recording, audio_buffer_thread, buffer_size, animate, fig
     if is_recording==False:
         print('start button')
         is_recording=True
         sampler.start()
         # detector.start()
         threading.Thread(target=fill_audio_buffer_with_que).start()
-        threading.Thread(target=plot_audio_in_buffer).start()
+        if animate is None:
+            animate = FuncAnimation(fig, plot_audio_in_buffer, frames=buffer_size, interval=50, blit=False, repeat=False)
+            animate._start()
+        else:
+            animate.event_source.start()
         
 def press_pause():
-    global is_recording, audio_buffer_thread
+    global is_recording, audio_buffer_thread, animate
     if is_recording==True:
         print('pause button')
         sampler.stop()
         # detector.stop()
-        is_recording=False    
+        is_recording=False
+        threading.Thread(target=pause_animation)
+
+def pause_animation():
+    global audio_visual_que, animate
+    while not audio_visual_que.empty():
+        pass
+    animate.event_source.stop()
             
 window_width = 1000
 window_height = int((1/2)*window_width) ## W:H = 2:1
@@ -74,8 +82,10 @@ root.title("Sound Event")
 root.geometry("{}x{}".format(window_width, window_height))
 
 # initiate the widgets
+animate = None
 fig = Figure()
 ax = fig.add_subplot(111)
+line, = ax.plot(TIME, np.array(audio_buffer))
 audio_graph = FigureCanvasTkAgg(fig, master=root)
 event_frame = tk.Frame(root) # showing detected event label
 start_button = tk.Button(root, text="start", command=press_start)
