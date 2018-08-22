@@ -16,7 +16,7 @@ args = parser.parse_args()
 
 audio_visual_que = queue.Queue() # audio data container for visualization
 audio_detect_que = queue.Queue() # audio data container for event detection
-audio_event_que = queue.Queue() # container for event detecting results
+audio_event_que = mp.Queue() # container for event detecting results
 sampler = Sampler(audio_detect_que, audio_visual_que, args) # sampling audio
 detector = Detector(audio_detect_que, audio_event_que, args) # detecting audio event
 ui = UI(audio_visual_que, audio_event_que, sampler, detector, args)

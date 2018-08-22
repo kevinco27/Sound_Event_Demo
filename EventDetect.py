@@ -1,6 +1,8 @@
 # import torch
 # import librosa
 import threading, queue
+import random
+from multiprocessing import Process
 
 
 class Detector:
@@ -13,22 +15,22 @@ class Detector:
         self.result_que = queue.Queue()
         self.is_stop = False
 
-    def _detect(self):
+    def _detect(self, event_que):
         while(not self.is_stop):
             if not self.detect_que.empty():
                 frame = self.detect_que.get()
-                # trans wav to spectrogram
-                # fea = librosa.feature.melspectrogram(wav, sr=self.args.sr, n_fft=self.args.ws, 
-                #     hop_length=self.args.hs, n_mels=self.args.mel)
-                # fea = fea.reshape(1,1,128,82)
-                # with torch.no_grad():
-                #     data = Variable(torch.from_numpy(fea))
-                # result,_ = model(data, 0, 0)
-                # self.result_que.put(result)
+                Time = frame[0][1] # start time stamp of the frame
+                print(Time)
+                # #[Testing] generate fake results
+                result = random.randint(1,10)
+                result = "cry" if result<=7 else "None"
+                result = [result, Time]
+                event_que.put(result)
     
     def start(self):
         self.is_stop=False
         # threading.Thread(target=self._detect).start()
+        Process(target=self._detect, args=(self.event_que,)).start()
     def stop(self):
         self.is_stop=True
         
