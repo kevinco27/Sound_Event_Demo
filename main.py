@@ -1,5 +1,6 @@
 import argparse
 import queue
+import multiprocessing as mp
 from SoundSampler import Sampler
 from soundEventUI import UI
 from EventDetect import Detector

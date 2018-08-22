@@ -1,6 +1,7 @@
 import numpy as np
 import pyaudio
 import threading, queue
+import multiprocessing as mp
 import time
 
 class Sampler:
@@ -17,6 +18,7 @@ class Sampler:
         self.detect_que = detect_que
         self.visual_que = visual_que
         self.thread = None
+        self.proc = None
     ## audio sampling format
         self.RATE = self.args.sr
         self.CHUNK = self.args.ws # or smaller than sample rate
@@ -29,6 +31,7 @@ class Sampler:
         self.is_stop = False
         
     def _sampling(self):
+        print("sampling start")
         '''
         during sampling, sampler will put a chuck data to visual que 
         and a frame, which consist of mutiple chunks to detect que
@@ -42,6 +45,7 @@ class Sampler:
                 frame.append([data, timeStamp])
                 self.visual_que.put([data, timeStamp])
             self.detect_que.put(frame)
+        print("sampling end")
             
             
     def start(self):
@@ -53,6 +57,9 @@ class Sampler:
                                 frames_per_buffer = self.CHUNK)
             self.thread = threading.Thread(target=self._sampling)
             self.thread.start()
+            # self.proc = mp.Process(target=self._sampling)
+            # self.proc.start()
+            
         else:
             try:
                 self.stream.start_stream()
@@ -68,10 +75,13 @@ class Sampler:
             self.is_stop = False
             self.thread = threading.Thread(target=self._sampling)
             self.thread.start()
+            # self.proc = mp.Process(target=self._sampling)
+            # self.proc.start()
             
     def stop(self):
         self.is_stop = True
         self.thread.join()
+        # self.proc.join()
         self.stream.stop_stream()
         
         

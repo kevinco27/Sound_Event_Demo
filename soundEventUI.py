@@ -1,6 +1,7 @@
 import numpy as np
 from collections import deque
 import threading, queue
+import multiprocessing as mp
 import tkinter as tk
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
@@ -62,6 +63,7 @@ class UI:
             self.sampler.start()
             self.detector.start()
             threading.Thread(target=self.fill_audio_buffer_with_que).start()
+            # mp.Process(target=self.fill_audio_buffer_with_que).start()
             if self.animate is None:
                 self.animate = FuncAnimation(self.fig, 
                                             self.plot_audio_in_buffer, 
