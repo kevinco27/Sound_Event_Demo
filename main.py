@@ -6,7 +6,7 @@ from EventDetect import Detector
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--sr', default =16000, type=int, help='sample rate')
-parser.add_argument('--ws', default=2048, type=int, help='windows size')
+parser.add_argument('--ws', default=1000, type=int, help='windows size')
 parser.add_argument('--hs',  default=492,   type=int, help='hop size')
 parser.add_argument('--mel', default=128,   type=int, help='mel bands')
 parser.add_argument('--rd', default=1,    type=int, help='recording duration')

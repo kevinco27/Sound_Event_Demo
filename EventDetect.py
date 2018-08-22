@@ -28,7 +28,7 @@ class Detector:
     
     def start(self):
         self.is_stop=False
-        threading.Thread(target=self._detect).start()
+        # threading.Thread(target=self._detect).start()
     def stop(self):
         self.is_stop=True
         

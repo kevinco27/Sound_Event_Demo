@@ -41,7 +41,7 @@ class UI:
     def fill_audio_buffer_with_que(self):
         while self.is_recording:
             while not self.visual_que.empty():
-                print(self.visual_que.qsize())
+                print("visual que size: {}".format(self.visual_que.qsize()))
                 data, fram_start_time = self.visual_que.get()
                 self.audio_buffer.extendleft(data)
     
