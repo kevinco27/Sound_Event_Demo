@@ -7,9 +7,11 @@ from matplotlib.figure import Figure
 from matplotlib.animation import FuncAnimation
 
 class UI:
-    def __init__(self, visual_que, audio_sampler, args):
+    def __init__(self, visual_que, event_que, audio_sampler, audio_detector, args):
         self.visual_que = visual_que
+        self.event_que = event_que
         self.sampler = audio_sampler
+        self.detector = audio_detector
         self.args = args
         self.is_recording = False
         self.buffer_size = (args.sr//args.ws)*args.ws*args.rd*args.frame
@@ -25,6 +27,7 @@ class UI:
         self.animate = None
         self.fig = Figure()
         self.ax = self.fig.add_subplot(111)
+        self.ax.set_ylim(-2, 2)
         self.line, = self.ax.plot(self.TIME, np.array(self.audio_buffer))
         self.audio_graph = FigureCanvasTkAgg(self.fig, master=self.root)
         self.start_button = tk.Button(self.root, text="start", command=self.press_start)
@@ -38,11 +41,11 @@ class UI:
     def fill_audio_buffer_with_que(self):
         while self.is_recording:
             while not self.visual_que.empty():
-                data = self.visual_que.get()
+                print(self.visual_que.qsize())
+                data, fram_start_time = self.visual_que.get()
                 self.audio_buffer.extendleft(data)
     
     def plot_audio_in_buffer(self, frame):
-        self.ax.set_ylim(-2, 2)
         plot_data = np.array(self.audio_buffer)
         self.line.set_data(self.TIME, plot_data)
         return self.line
@@ -57,7 +60,7 @@ class UI:
             print('start button')
             self.is_recording=True
             self.sampler.start()
-            # self.detector.start()
+            self.detector.start()
             threading.Thread(target=self.fill_audio_buffer_with_que).start()
             if self.animate is None:
                 self.animate = FuncAnimation(self.fig, 
@@ -75,5 +78,5 @@ class UI:
             print('pause button')
             threading.Thread(target=self.pause_animation).start()
             self.sampler.stop()
-            #self.detector.stop()
+            self.detector.stop()
             self.is_recording=False

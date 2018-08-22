@@ -29,17 +29,19 @@ class Sampler:
         self.is_stop = False
         
     def _sampling(self):
+        '''
+        during sampling, sampler will put a chuck data to visual que 
+        and a frame, which consist of mutiple chunks to detect que
+        '''
         while(not self.is_stop):
-            frames = []
+            frame = []
             for i in range(0, int(self.RATE/self.CHUNK * self.RECORD_SECONDS)):
-                data = self.stream.read(self.CHUNK, exception_on_overflow = False)
-                frames.append(data) # data has type of string
-                self.visual_que.put(np.fromstring(np.array(data), np.float32))
-            
-            # String type to Numerical type
-            # frames = np.array(frames).flatten()
-            # frames = np.fromstring(frames, np.float32)
-            # self.detect_que.put(frames)
+                data = self.stream.read(self.CHUNK, exception_on_overflow = False) # String type
+                data = np.fromstring(np.array(data), np.float32) # String type to Numerical type
+                timeStamp = time.time()
+                frame.append([data, timeStamp])
+                self.visual_que.put([data, timeStamp])
+            self.detect_que.put(frame)
             
             
     def start(self):

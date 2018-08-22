@@ -2,7 +2,7 @@ import argparse
 import queue
 from SoundSampler import Sampler
 from soundEventUI import UI
-# from EventDetect import Detector
+from EventDetect import Detector
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--sr', default =16000, type=int, help='sample rate')
@@ -15,6 +15,7 @@ args = parser.parse_args()
 
 audio_visual_que = queue.Queue() # audio data container for visualization
 audio_detect_que = queue.Queue() # audio data container for event detection
+audio_event_que = queue.Queue() # container for event detecting results
 sampler = Sampler(audio_detect_que, audio_visual_que, args) # sampling audio
-# detector = Detector(audio_detect_que, args) # detecting audio event
-ui = UI(audio_visual_que, sampler, args)
+detector = Detector(audio_detect_que, audio_event_que, args) # detecting audio event
+ui = UI(audio_visual_que, audio_event_que, sampler, detector, args)
