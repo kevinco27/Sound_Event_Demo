@@ -1,6 +1,5 @@
 # import torch
 # import librosa
-import threading, queue
 import random
 from multiprocessing import Process, Value, Manager
 import time
@@ -28,7 +27,6 @@ class Detector:
     
     def start(self):
         self.is_stop.value=False
-        # threading.Thread(target=self._detect).start()
         Process(target=self._detect, daemon=True).start()
 
     def stop(self):

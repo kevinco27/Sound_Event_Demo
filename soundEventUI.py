@@ -6,6 +6,7 @@ import tkinter as tk
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
 from matplotlib.animation import FuncAnimation
+import time
 
 class UI:
     def __init__(self, visual_que, event_que, audio_sampler, audio_detector, args):
@@ -14,9 +15,14 @@ class UI:
         self.sampler = audio_sampler
         self.detector = audio_detector
         self.args = args
+        self.threadLock = threading.RLock()
         self.is_recording = False
         self.buffer_size = (args.sr//args.ws)*args.ws*args.rd*args.frame
         self.audio_buffer = deque(np.zeros(self.buffer_size), maxlen=self.buffer_size)
+        self.colored_buffer = deque(np.zeros(self.buffer_size, dtype=np.int), maxlen=self.buffer_size)
+        # wsData_pos and wsData_in_buffer_pos_map are for tracking group of same window size data in audio buffer
+        self.wsData_pos = deque(np.zeros(self.buffer_size), maxlen=self.buffer_size//args.ws)
+        self.wsData_in_buffer_pos_map = [[idx*self.args.ws, idx*self.args.ws+(self.args.ws-1)] for idx in range(0, self.buffer_size//args.ws)]
         self.TIME = np.linspace(0, self.buffer_size//args.sr, num=self.buffer_size)
 
         ## User Interface widgets
@@ -43,15 +49,28 @@ class UI:
         while self.is_recording:
             while not self.visual_que.empty():
                 print("visual que size: {}".format(self.visual_que.qsize()))
-                data, fram_start_time = self.visual_que.get()
+                data, timeStamp = self.visual_que.get()
                 self.audio_buffer.extendleft(data)
+                with self.threadLock: # wsData_pos and colored_buffer 
+                    self.colored_buffer.extendleft([0]*self.args.ws)
+                    self.wsData_pos.appendleft(timeStamp)
     
     def change_audio_buffer_state_by_event(self):        
         while self.is_recording:
             while not self.event_que.empty():
                 event, frame_start_time = self.event_que.get()
                 if event != "None":
-                    pass
+                    with self.threadLock: # wsData_pos and colored_buffer 
+                        try:
+                            # mark the samples in colored buffer to decide which samples to be colored
+                            start_idx = self.wsData_pos.index(frame_start_time)
+                            end_idx = start_idx + self.args.sr*self.args.rd//self.args.ws
+                            start_idx_in_buffer = self.wsData_in_buffer_pos_map[start_idx][0]
+                            end_idx_in_buffer = self.wsData_in_buffer_pos_map[end_idx][1] if end_idx < len(self.wsData_pos) else self.buffer_size-1
+                            for i in range(start_idx_in_buffer, end_idx_in_buffer+1):
+                                self.colored_buffer[i] = 1
+                        except:
+                            pass
     
     def plot_audio_in_buffer(self, frame):
         plot_data = np.array(self.audio_buffer)
