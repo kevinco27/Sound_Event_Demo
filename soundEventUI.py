@@ -42,14 +42,14 @@ class UI:
     def fill_audio_buffer_with_que(self):
         while self.is_recording:
             while not self.visual_que.empty():
-                print("visual que size: {}".format(self.visual_que.qsize()))
+                # print("visual que size: {}".format(self.visual_que.qsize()))
                 data, fram_start_time = self.visual_que.get()
                 self.audio_buffer.extendleft(data)
     
     def change_audio_buffer_state_by_event(self):        
         while self.is_recording:
             while not self.event_que.empty():
-                event, frame_start_time = self.event_que.get()
+                event = self.event_que.get()
                 if event != "None":
                     print(event)
     
