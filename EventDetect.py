@@ -17,7 +17,7 @@ class Detector:
     def _detect(self):
         while(not self.is_stop.value):
             if not self.detect_que.empty():
-                time.sleep(random.randint(0,1))
+                time.sleep(1)
                 frame = self.detect_que.get()
                 Time = frame[0][1] # start time stamp of the frame
                 # #[Testing] generate fake results

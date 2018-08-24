@@ -28,7 +28,7 @@ class UI:
         self.ax = self.fig.add_subplot(111)
         self.ax_position = self.ax.get_position()
         self.ax.set_ylim(-0.5, 0.5)
-        self.ax.axis('off')
+        # self.ax.axis('off')
         self.TIME = np.linspace(0, self.buffer_size//args.sr, num=self.buffer_size)
         self.line, = self.ax.plot(self.TIME, np.array(self.audio_buffer))
          # wsData_pos and wsData_in_buffer_pos_map are for tracking group of same window size data in audio buffer
@@ -90,6 +90,7 @@ class UI:
                         except err :
                             print(err)
                             pass
+                            
     def plot_audio_in_buffer(self, frame):
         plot_data = np.array(self.audio_buffer)
         self.line.set_data(self.TIME, plot_data)
