@@ -9,19 +9,19 @@ class Detector:
     def __init__(self, detect_que, event_que, args):
         self.detect_que = detect_que
         self.event_que = event_que
-        self.net = Trainer(args)
         self.args = args
         self.is_stop = Manager().Value('i', True)
+        self.net = Trainer(self.args)
 
     def _detect(self):
         while(not self.is_stop.value):
             if not self.detect_que.empty():
                 frame = self.detect_que.get()
                 Time = frame[1][0] # start time stamp of the frame
-                data = np.array(frame[0])
+                data = np.array(frame[0])  
+                # print(data, data.shape)
                 result = self.net.Tester(data)
-                result = [result, Time]
-                self.event_que.put(result)
+                self.event_que.put([data.shape,Time])
     
     def start(self):
         self.is_stop.value=False

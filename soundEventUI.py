@@ -73,7 +73,7 @@ class UI:
         while self.is_recording:
             while not self.event_que.empty():
                 event, frame_start_time = self.event_que.get()
-                print(event)
+                # print(event)
                 # if event != 0:
                 #     with self.threadLock: # wsData_pos and colored_buffer 
                 #         try:

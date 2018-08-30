@@ -43,7 +43,7 @@ class Sampler:
                 timeStamp = time.time()
                 timeStamps.append(timeStamp)
                 self.visual_que.put([data, timeStamp])
-            frame = [data, timeStamps]
+            frame = [datas, timeStamps]
             self.detect_que.put(frame)
             
             

@@ -8,6 +8,7 @@ import os
 from extractor import *
 from fun import *
 
+torch.set_num_threads(1)
 class Trainer:
     def __init__(self, args):
         self.args = args
@@ -19,7 +20,9 @@ class Trainer:
         self.load_pretrained_model()
     
     def Tester(self, audio):
+        print('111111')
         fea = mel(audio, self.args).astype('float32')
+        print(fea)
         fea = torch.from_numpy(fea)
         X = Variable(fea)
         CP, SP  = self.model(X)

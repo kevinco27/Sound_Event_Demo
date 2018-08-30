@@ -20,6 +20,7 @@ def main():
     parser.add_argument('--dn',  default='CRW_baby_cry', type=str, help='dataset name')
     parser.add_argument('--sr',  default=16000, type=int, help='[fea_ext] sample rate')
     parser.add_argument('--ws',  default=2000,  type=int, help='[fea_ext] windows size')
+    parser.add_argument('--wws',  default=2048,  type=int, help='[fea_ext] windows size')
     parser.add_argument('--hs',  default=497,   type=int, help='[fea_ext] hop size')
     parser.add_argument('--mel', default=128,   type=int, help='[fea_ext] mel bands')
     parser.add_argument('--msc', default=1,     type=int, help='[fea_ext] top duration of audio clip')
