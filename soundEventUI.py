@@ -18,9 +18,9 @@ class UI:
         self.args = args
         self.threadLock = threading.RLock()
         self.is_recording = False
-        self.buffer_size = (args.sr//args.ws)*args.ws*args.rd*args.frame
+        self.buffer_size = (args.sr//args.ws)*args.ws*args.msc*args.frame
         self.num_windows = self.buffer_size//(args.ws)
-        self.num_frames = self.buffer_size//(args.sr*args.rd)
+        self.num_frames = self.buffer_size//(args.sr*args.msc)
         self.audio_buffer = deque(np.zeros(self.buffer_size), maxlen=self.buffer_size)
         self.colored_buffer = []
         
@@ -55,7 +55,7 @@ class UI:
     def fill_audio_buffer_with_que(self):
         while self.is_recording:
             while not self.visual_que.empty():
-                print("visual que size: {}".format(self.visual_que.qsize()))
+                # print("visual que size: {}".format(self.visual_que.qsize()))
                 data, timeStamp = self.visual_que.get()
                 self.audio_buffer.extendleft(data)
                 with self.threadLock: # wsData_pos 
@@ -73,23 +73,24 @@ class UI:
         while self.is_recording:
             while not self.event_que.empty():
                 event, frame_start_time = self.event_que.get()
-                if event != "None":
-                    with self.threadLock: # wsData_pos and colored_buffer 
-                        try:
-                            start_idx = self.wsData_pos.index(frame_start_time)
-                            fig_pos_x = self.wsData_pos_map[start_idx]
-                            rect = Rectangle((fig_pos_x, self.ax_position.y0+self.ax_position.height*0.25), 
-                                        self.ax_position.width/self.num_frames,
-                                        self.ax_position.height/2,
-                                        transform=self.ax.transAxes,
-                                        color= 'r',
-                                        alpha=0.3,
-                                        zorder=1000)
-                            self.ax.add_patch(rect)
-                            self.colored_buffer.append(rect)
-                        except err :
-                            print(err)
-                            pass
+                print(event)
+                # if event != 0:
+                #     with self.threadLock: # wsData_pos and colored_buffer 
+                #         try:
+                #             start_idx = self.wsData_pos.index(frame_start_time)
+                #             fig_pos_x = self.wsData_pos_map[start_idx]
+                #             rect = Rectangle((fig_pos_x, self.ax_position.y0+self.ax_position.height*0.25), 
+                #                         self.ax_position.width/self.num_frames,
+                #                         self.ax_position.height/2,
+                #                         transform=self.ax.transAxes,
+                #                         color= 'r',
+                #                         alpha=0.3,
+                #                         zorder=1000)
+                #             self.ax.add_patch(rect)
+                #             self.colored_buffer.append(rect)
+                #         except err :
+                #             print(err)
+                #             pass
                             
     def plot_audio_in_buffer(self, frame):
         plot_data = np.array(self.audio_buffer)

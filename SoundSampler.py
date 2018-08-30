@@ -22,7 +22,7 @@ class Sampler:
         self.CHUNK = self.args.ws # or smaller than sample rate
         self.FORMAT = pyaudio.paFloat32
         self.CHANNELS = 1
-        self.RECORD_SECONDS = self.args.rd   
+        self.RECORD_SECONDS = self.args.msc   
     ## recording object
         self.audio = pyaudio.PyAudio()
         self.stream = None
@@ -34,13 +34,16 @@ class Sampler:
         and a frame, which consist of mutiple chunks to detect que
         '''
         while(not self.is_stop):
-            frame = []
+            timeStamps = []
+            datas = []
             for i in range(0, int(self.RATE/self.CHUNK * self.RECORD_SECONDS)):
                 data = self.stream.read(self.CHUNK, exception_on_overflow = False) # String type
                 data = np.fromstring(np.array(data), np.float32) # String type to Numerical type
+                datas.extend(data)
                 timeStamp = time.time()
-                frame.append([data, timeStamp])
+                timeStamps.append(timeStamp)
                 self.visual_que.put([data, timeStamp])
+            frame = [data, timeStamps]
             self.detect_que.put(frame)
             
             
