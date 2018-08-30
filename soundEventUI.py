@@ -30,7 +30,7 @@ class UI:
         self.fig = Figure()
         self.ax = self.fig.add_subplot(111)
         self.ax_position = self.ax.get_position()
-        self.ax.set_ylim(-0.5, 0.5)
+        self.ax.set_ylim(-0.7, 0.7)
         # self.ax.axis('off')
         self.TIME = np.linspace(0, self.buffer_size//args.sr, num=self.buffer_size)
         self.line, = self.ax.plot(self.TIME, np.array(self.audio_buffer))
@@ -82,7 +82,7 @@ class UI:
                     if(i==1):
                         ii+=1
                 self.count = ii
-
+                print(self.count)
                 if event != 0:
                     with self.threadLock: # wsData_pos and colored_buffer 
                         try:
@@ -104,10 +104,10 @@ class UI:
     def plot_audio_in_buffer(self, frame):
         plot_data = np.array(self.audio_buffer)
         self.line.set_data(self.TIME, plot_data)
-        if self.count>=3:
+        if self.count>=2:
             self.line.set_color('red')
         else:
-            self.line.set_color('blue')
+            self.line.set_color("#009ADC")
         return [self.line] + self.colored_buffer
     
     def pause_animation(self):

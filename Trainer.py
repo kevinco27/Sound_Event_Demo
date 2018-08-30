@@ -2,13 +2,12 @@ import torch
 #import torch.optim as optim
 #import torch.nn.functional as F
 from torch.autograd import Variable
-from net import *
+from net89 import *
 
 import os
 from extractor import *
 from fun import *
 
-torch.set_num_threads(1)
 class Trainer:
     def __init__(self, args):
         self.args = args
