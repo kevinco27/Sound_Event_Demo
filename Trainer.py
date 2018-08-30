@@ -20,9 +20,7 @@ class Trainer:
         self.load_pretrained_model()
     
     def Tester(self, audio):
-        print('111111')
         fea = mel(audio, self.args).astype('float32')
-        print(fea)
         fea = torch.from_numpy(fea)
         X = Variable(fea)
         CP, SP  = self.model(X)

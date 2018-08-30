@@ -7,6 +7,7 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.figure import Figure
 from matplotlib.animation import FuncAnimation
 from matplotlib.patches import Rectangle
+import matplotlib as mpl
 import time
 
 class UI:
@@ -18,11 +19,13 @@ class UI:
         self.args = args
         self.threadLock = threading.RLock()
         self.is_recording = False
-        self.buffer_size = (args.sr//args.ws)*args.ws*args.msc*args.frame
+        self.buffer_size = int((args.sr//args.ws)*args.ws*args.msc*args.frame)
         self.num_windows = self.buffer_size//(args.ws)
         self.num_frames = self.buffer_size//(args.sr*args.msc)
         self.audio_buffer = deque(np.zeros(self.buffer_size), maxlen=self.buffer_size)
         self.colored_buffer = []
+        self.backColor_buffer = deque(np.zeros(5), maxlen = 5)
+        self.count = 0
         
         self.fig = Figure()
         self.ax = self.fig.add_subplot(111)
@@ -73,28 +76,38 @@ class UI:
         while self.is_recording:
             while not self.event_que.empty():
                 event, frame_start_time = self.event_que.get()
-                # print(event)
-                # if event != 0:
-                #     with self.threadLock: # wsData_pos and colored_buffer 
-                #         try:
-                #             start_idx = self.wsData_pos.index(frame_start_time)
-                #             fig_pos_x = self.wsData_pos_map[start_idx]
-                #             rect = Rectangle((fig_pos_x, self.ax_position.y0+self.ax_position.height*0.25), 
-                #                         self.ax_position.width/self.num_frames,
-                #                         self.ax_position.height/2,
-                #                         transform=self.ax.transAxes,
-                #                         color= 'r',
-                #                         alpha=0.3,
-                #                         zorder=1000)
-                #             self.ax.add_patch(rect)
-                #             self.colored_buffer.append(rect)
-                #         except err :
-                #             print(err)
-                #             pass
+                self.backColor_buffer.appendleft(event)
+                ii = 0
+                for i in self.backColor_buffer:
+                    if(i==1):
+                        ii+=1
+                self.count = ii
+
+                if event != 0:
+                    with self.threadLock: # wsData_pos and colored_buffer 
+                        try:
+                            start_idx = self.wsData_pos.index(frame_start_time)
+                            fig_pos_x = self.wsData_pos_map[start_idx]
+                            rect = Rectangle((fig_pos_x, self.ax_position.y0+self.ax_position.height*0.25), 
+                                        self.ax_position.width/self.num_frames,
+                                        self.ax_position.height/2,
+                                        transform=self.ax.transAxes,
+                                        color= 'r',
+                                        alpha=0.3,
+                                        zorder=1000)
+                            self.ax.add_patch(rect)
+                            self.colored_buffer.append(rect)
+                        except err :
+                            print(err)
+                            pass
                             
     def plot_audio_in_buffer(self, frame):
         plot_data = np.array(self.audio_buffer)
         self.line.set_data(self.TIME, plot_data)
+        if self.count>=3:
+            self.line.set_color('red')
+        else:
+            self.line.set_color('blue')
         return [self.line] + self.colored_buffer
     
     def pause_animation(self):

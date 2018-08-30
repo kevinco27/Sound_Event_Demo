@@ -19,9 +19,8 @@ class Detector:
                 frame = self.detect_que.get()
                 Time = frame[1][0] # start time stamp of the frame
                 data = np.array(frame[0])  
-                # print(data, data.shape)
                 result = self.net.Tester(data)
-                self.event_que.put([data.shape,Time])
+                self.event_que.put([result,Time])
     
     def start(self):
         self.is_stop.value=False

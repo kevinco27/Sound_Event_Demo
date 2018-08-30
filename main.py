@@ -4,7 +4,10 @@ import multiprocessing as mp
 from SoundSampler import Sampler
 from soundEventUI import UI
 from EventDetect import Detector
-
+import os
+os.environ["MKL_NUM_THREADS"] = "1" 
+os.environ["NUMEXPR_NUM_THREADS"] = "1" 
+os.environ["OMP_NUM_THREADS"] = "1"
 def main():
     # parser = argparse.ArgumentParser()
     # parser.add_argument('--sr', default =16000, type=int, help='sample rate')
@@ -47,5 +50,5 @@ def main():
     ui = UI(audio_visual_que, audio_event_que, sampler, detector, args)
 
 if __name__ == '__main__':
-    # mp.set_start_method('fork')
+    mp.set_start_method('spawn', force=True)
     main()
