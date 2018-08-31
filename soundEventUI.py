@@ -44,6 +44,11 @@ class UI:
         self.root = tk.Tk()
         self.root.title("Sound Event")
         self.root.geometry("{}x{}".format(self.window_width, self.window_height))
+        def on_closing_window():
+            self.sampler.stop()
+            self.detector.stop()
+            self.root.destroy()
+        self.root.protocol("WM_DELETE_WINDOW", on_closing_window)
         self.animate = None
         self.audio_graph = FigureCanvasTkAgg(self.fig, master=self.root)
         self.start_button = tk.Button(self.root, text="start", command=self.press_start)
@@ -121,8 +126,8 @@ class UI:
             self.is_recording=True
             self.sampler.start()
             self.detector.start()
-            threading.Thread(target=self.fill_audio_buffer_with_que).start()
-            threading.Thread(target=self.mark_audio_frame_by_audio_event).start()
+            threading.Thread(target=self.fill_audio_buffer_with_que, daemon=True).start()
+            threading.Thread(target=self.mark_audio_frame_by_audio_event, daemon=True).start()
             if self.animate is None:
                 self.animate = FuncAnimation(self.fig, 
                                             self.plot_audio_in_buffer, 
