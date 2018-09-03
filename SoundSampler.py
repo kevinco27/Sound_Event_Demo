@@ -75,7 +75,8 @@ class Sampler:
             
     def stop(self):
         self.is_stop = True
-        self.thread.join()
-        self.stream.stop_stream()
+        if self.thread!=None and self.stream!=None:
+            self.thread.join()
+            self.stream.stop_stream()
         
         

@@ -30,13 +30,14 @@ class UI:
         self.fig = Figure()
         self.ax = self.fig.add_subplot(111)
         self.ax_position = self.ax.get_position()
-        self.ax.set_ylim(-0.7, 0.7)
+        self.ax.set_ylim(-1.0, 1.0)
         # self.ax.axis('off')
         self.TIME = np.linspace(0, self.buffer_size//args.sr, num=self.buffer_size)
         self.line, = self.ax.plot(self.TIME, np.array(self.audio_buffer))
          # wsData_pos and wsData_in_buffer_pos_map are for tracking group of same window size data in audio buffer
-        self.wsData_pos = deque(np.zeros(self.buffer_size//args.ws), maxlen=self.buffer_size//args.ws)
-        self.wsData_pos_map = np.linspace(self.ax_position.x0, self.ax_position.x1, num=self.num_windows, endpoint=False)
+        self.wsData_pos = deque(np.zeros(self.num_windows), maxlen=self.num_windows)
+        self.wsData_pos_map = np.linspace(0, self.ax_position.x1, num=self.num_windows, endpoint=False)
+        
 
         ## User Interface widgets
         self.window_width = 1000
