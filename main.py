@@ -4,10 +4,8 @@ import multiprocessing as mp
 from SoundSampler import Sampler
 from soundEventUI import UI
 from EventDetect import Detector
-import os
-os.environ["MKL_NUM_THREADS"] = "1" 
-os.environ["NUMEXPR_NUM_THREADS"] = "1" 
-os.environ["OMP_NUM_THREADS"] = "1"
+import time
+
 def main():
     # parser = argparse.ArgumentParser()
     # parser.add_argument('--sr', default =16000, type=int, help='sample rate')
@@ -27,7 +25,7 @@ def main():
     parser.add_argument('--hs',  default=497,   type=int, help='[fea_ext] hop size')
     parser.add_argument('--mel', default=128,   type=int, help='[fea_ext] mel bands')
     parser.add_argument('--msc', default=1,     type=int, help='[fea_ext] top duration of audio clip')
-    parser.add_argument('--frame', default=10, type=int, help='number of recording duration showing on UI')
+    parser.add_argument('--frame', default=3, type=int, help='number of recording duration showing on UI')
     parser.add_argument('--et',  default=10000, type=int, help='[fea_ext] spect manti')
 
     # params for training
