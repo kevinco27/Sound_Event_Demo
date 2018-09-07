@@ -2,7 +2,7 @@ import torch
 #import torch.optim as optim
 #import torch.nn.functional as F
 from torch.autograd import Variable
-from net89 import *
+from noisenet import *
 
 import os
 from extractor import *

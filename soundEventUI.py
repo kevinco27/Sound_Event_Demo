@@ -47,7 +47,7 @@ class UI:
         
         ## User Interface widgets
         self.root = tk.Tk()
-        self.root.title("Sound Event")
+        self.root.title("Sound Event {}".format(args.pmp))
         self.root.geometry("{}x{}".format(self.window_width, self.window_height))
         def on_closing_window():
             self.sampler.stop()
