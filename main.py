@@ -15,7 +15,7 @@ def main():
     # parser.add_argument('--rd', default=5,    type=int, help='recording duration')
     # parser.add_argument('--frame', default=3, type=int, help='number of recording duration showing on UI')
 
-    pmp = './model/CNN_relu_bn_sep_vr1_DR2_128_89'
+    pmp = './model/epoch_56'
     # params for audio feature extraction (mel-spectrogram)
     parser = argparse.ArgumentParser(description= 'PyTorch M&ment Training using DCASE2017 Dataset')
     parser.add_argument('--dn',  default='CRW_baby_cry', type=str, help='dataset name')
