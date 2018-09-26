@@ -15,12 +15,14 @@ class Detector:
 
     def _detect(self):
         while(not self.is_stop.value):
+            s0 = time.time()
             if not self.detect_que.empty():
                 frame = self.detect_que.get()
                 Time = frame[1][0] # start time stamp of the frame
-                data = np.array(frame[0])  
+                data = np.array(frame[0])
                 result = self.net.Tester(data)
                 self.event_que.put([result,Time])
+                print(time.time()-s0)
     
     def start(self):
         self.is_stop.value=False
