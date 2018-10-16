@@ -28,7 +28,7 @@ class GLU(nn.Module):
         self.bn = nn.BatchNorm2d(out)
         self.dp = nn.Dropout(.5)
         #self.bn2 = nn.BatchNorm2d(out)
-        self.mp = nn.MaxPool2d(ms)
+        self.mp = nn.MaxPool2d(ms, ceil_mode=False)
     
     def forward(self, x):
         lin = self.cnn_lin(x)
@@ -66,8 +66,8 @@ class DNN(nn.Module):
         #self.bn2 = nn.BatchNorm1d(out)
     
     def forward(self, x):
-        avgo = F.avg_pool2d(x, x.size()[2:]).view(x.size()[0], -1)
-        maxo = F.max_pool2d(x, x.size()[2:]).view(x.size()[0], -1)
+        avgo = F.avg_pool2d(x, x.size()[2:], ceil_mode=False).view(x.size()[0], -1)
+        maxo = F.max_pool2d(x, x.size()[2:], ceil_mode=False).view(x.size()[0], -1)
         out = torch.cat([avgo, maxo], dim=1)
         out = self.dp(out)
         out = F.relu(self.bn1(self.dnn1(out)))
