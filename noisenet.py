@@ -26,8 +26,11 @@ class DNN(nn.Module):
 
     
     def forward(self, x):
-        avgo = F.avg_pool2d(x, x.size()[2:], ceil_mode=False).view(x.size()[0], -1)
-        maxo = F.max_pool2d(x, x.size()[2:], ceil_mode=False).view(x.size()[0], -1)
+        ker_size = x.detach().numpy().shape[2:]
+        avgo = F.avg_pool2d(x, ker_size, ceil_mode=False).view(x.size()[0], -1)
+        maxo = F.max_pool2d(x, ker_size, ceil_mode=False).view(x.size()[0], -1)
+        # avgo = F.avg_pool2d(x, x.size()[2:], ceil_mode=False).view(x.size()[0], -1)
+        # maxo = F.max_pool2d(x, x.size()[2:], ceil_mode=False).view(x.size()[0], -1)
         out = torch.cat([avgo, maxo], dim=1)
         out = self.dp(out)
         out = F.relu(self.bn1(self.dnn1(out)))

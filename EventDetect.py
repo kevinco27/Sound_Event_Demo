@@ -1,8 +1,7 @@
-import random
-from multiprocessing import Process, Value, Manager
+from multiprocessing import Process, Manager
 import time
 from Trainer import *
-
+import numpy as np
 
 
 class Detector:
@@ -18,17 +17,17 @@ class Detector:
             s0 = time.time()
             if not self.detect_que.empty():
                 frame = self.detect_que.get()
-                Time = frame[1][0] # start time stamp of the frame
+                Time = frame[1][0]  # start time stamp of the frame
                 data = np.array(frame[0])
                 result = self.net.Tester(data)
-                self.event_que.put([result,Time])
+                self.event_que.put([result, Time])
                 print(time.time()-s0)
     
     def start(self):
-        self.is_stop.value=False
+        self.is_stop.value = False
         Process(target=self._detect, daemon=True).start()
 
     def stop(self):
-        self.is_stop.value=True
+        self.is_stop.value = True
         
 

@@ -1,0 +1,90 @@
+Net(
+  (G1): GLU(
+    (cnn_lin): Conv2d(1, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+    (bn): BatchNorm2d(128, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+    (mp): MaxPool2d(kernel_size=(2, 4), stride=(2, 4), padding=0, dilation=1, ceil_mode=False)
+  )
+  (G2): GLU(
+    (cnn_lin): Conv2d(128, 256, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+    (bn): BatchNorm2d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+    (mp): MaxPool2d(kernel_size=(2, 4), stride=(2, 4), padding=0, dilation=1, ceil_mode=False)
+  )
+  (G3): GLU(
+    (cnn_lin): Conv2d(256, 384, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1), bias=False)
+    (bn): BatchNorm2d(384, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+    (mp): MaxPool2d(kernel_size=(1, 1), stride=(1, 1), padding=0, dilation=1, ceil_mode=False)
+  )
+  (pred): DNN(
+    (dnn1): Linear(in_features=768, out_features=256, bias=True)
+    (bn1): BatchNorm1d(256, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+    (pred): Linear(in_features=256, out_features=2, bias=True)
+    (dp): Dropout(p=0.5)
+  )
+)
+Model:noisecnn	#params:1380226
+None
+Load Pre_trained Model : ./model/epoch_56
+
+
+module.G1.cnn_lin.weight
+module.G1.cnn_prd.weight
+module.G1.cnn_rec.weight
+module.G1.bn.weight
+module.G1.bn.bias
+module.G1.bn.running_mean
+module.G1.bn.running_var
+module.G1.bn.num_batches_tracked
+module.G2.cnn_lin.weight
+module.G2.cnn_prd.weight
+module.G2.cnn_rec.weight
+module.G2.bn.weight
+module.G2.bn.bias
+module.G2.bn.running_mean
+module.G2.bn.running_var
+module.G2.bn.num_batches_tracked
+module.G3.cnn_lin.weight
+module.G3.cnn_prd.weight
+module.G3.cnn_rec.weight
+module.G3.bn.weight
+module.G3.bn.bias
+module.G3.bn.running_mean
+module.G3.bn.running_var
+module.G3.bn.num_batches_tracked
+module.D1.cnn_lin.weight
+module.D1.cnn_1.weight
+module.D1.bn1.weight
+module.D1.bn1.bias
+module.D1.bn1.running_mean
+module.D1.bn1.running_var
+module.D1.bn1.num_batches_tracked
+module.D1.cnn_prd.weight
+module.D1.cnn_rec.weight
+module.D1.bn.weight
+module.D1.bn.bias
+module.D1.bn.running_mean
+module.D1.bn.running_var
+module.D1.bn.num_batches_tracked
+module.D2.cnn_lin.weight
+module.D2.cnn_1.weight
+module.D2.bn1.weight
+module.D2.bn1.bias
+module.D2.bn1.running_mean
+module.D2.bn1.running_var
+module.D2.bn1.num_batches_tracked
+module.D2.cnn_prd.weight
+module.D2.cnn_rec.weight
+module.D2.bn.weight
+module.D2.bn.bias
+module.D2.bn.running_mean
+module.D2.bn.running_var
+module.D2.bn.num_batches_tracked
+module.pred.dnn1.weight
+module.pred.dnn1.bias
+module.pred.bn1.weight
+module.pred.bn1.bias
+module.pred.bn1.running_mean
+module.pred.bn1.running_var
+module.pred.bn1.num_batches_tracked
+module.pred.pred.weight
+module.pred.pred.bias
+Load Pre_trained Model : ./model/epoch_56
