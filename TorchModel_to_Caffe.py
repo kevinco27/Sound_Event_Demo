@@ -59,23 +59,23 @@ rnd_input = rnd_input.astype('float32')
 
 print(prepared_backend.run(fea))
 print(prepared_backend.run(rnd_input))
-c2_workspace = prepared_backend.workspace
+# c2_workspace = prepared_backend.workspace
 
 
-c2_model = prepared_backend.predict_net
-c2_workspace.FeedBlob('28', np.array(5.4928))
-c2_workspace.FeedBlob('30', np.array(3.6098))
-c2_workspace.FeedBlob('60', np.array([[-1]]))
-c2_workspace.FeedBlob('51', np.array([[-1]]))
-from caffe2.python.predictor import mobile_exporter
-init_net, predict_net = mobile_exporter.Export(c2_workspace, c2_model,  c2_model.external_input)
+# c2_model = prepared_backend.predict_net
+# c2_workspace.FeedBlob('28', np.array(5.4928))
+# c2_workspace.FeedBlob('30', np.array(3.6098))
+# c2_workspace.FeedBlob('60', np.array([[-1]]))
+# c2_workspace.FeedBlob('51', np.array([[-1]]))
+# from caffe2.python.predictor import mobile_exporter
+# init_net, predict_net = mobile_exporter.Export(c2_workspace, c2_model,  c2_model.external_input)
 
-workspace.RunNetOnce(init_net.SerializeToString())
-workspace.CreateNet(predict_net.SerializeToString(), overwrite=True)
+# workspace.RunNetOnce(init_net.SerializeToString())
+# workspace.CreateNet(predict_net.SerializeToString(), overwrite=True)
 
-workspace.FeedBlob('0', fea) # input
-workspace.RunNetOnce(predict_net)
-print(workspace.FetchBlob('73')) # output
+# workspace.FeedBlob('0', fea) # input
+# workspace.RunNetOnce(predict_net)
+# print(workspace.FetchBlob('73')) # output
 
 
 # onnx -> caffe2 model
